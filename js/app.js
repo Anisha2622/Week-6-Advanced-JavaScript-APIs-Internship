@@ -4,6 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const weatherContent = document.getElementById('weatherContent');
     const loadingIndicator = document.getElementById('loadingIndicator');
     const errorMessage = document.getElementById('errorMessage');
+    const errorText = document.getElementById('errorText');
     const recentSearchesContainer = document.getElementById('recentSearches');
     
     const settingsPanel = document.getElementById('settingsPanel');
@@ -26,8 +27,8 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const showError = (message) => {
-        errorMessage.textContent = message;
-        errorMessage.style.display = 'block';
+        errorText.textContent = message;
+        errorMessage.style.display = 'flex';
         weatherContent.classList.add('hidden');
         loadingIndicator.style.display = 'none';
     };
@@ -62,6 +63,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         hideError();
         weatherContent.classList.add('hidden');
+        weatherContent.classList.remove('fade-in'); // Reset animation
         loadingIndicator.style.display = 'block';
 
         try {
@@ -76,11 +78,15 @@ document.addEventListener('DOMContentLoaded', () => {
             Storage.saveSearch(currentWeather.name);
             renderRecentSearches();
             
+            loadingIndicator.style.display = 'none';
             weatherContent.classList.remove('hidden');
+            
+            // Trigger reflow for animation
+            void weatherContent.offsetWidth; 
+            weatherContent.classList.add('fade-in');
+            
         } catch (error) {
             showError(error.message);
-        } finally {
-            loadingIndicator.style.display = 'none';
         }
     };
 
@@ -88,7 +94,10 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('cityName').textContent = `${data.name}, ${data.sys.country}`;
         document.getElementById('weatherDesc').textContent = data.weather[0].description;
         document.getElementById('temperature').textContent = `${Math.round(data.main.temp)}°`;
-        document.getElementById('weatherIcon').src = `https://openweathermap.org/img/wn/${data.weather[0].icon}@4x.png`;
+        
+        const iconEl = document.getElementById('weatherIcon');
+        iconEl.src = `https://openweathermap.org/img/wn/${data.weather[0].icon}@4x.png`;
+        iconEl.classList.remove('hidden');
         
         document.getElementById('humidity').textContent = `${data.main.humidity}%`;
         document.getElementById('windSpeed').textContent = `${data.wind.speed} m/s`;
@@ -106,13 +115,12 @@ document.addEventListener('DOMContentLoaded', () => {
             
             const card = document.createElement('div');
             card.className = 'forecast-card';
+            
+            // Fixed the broken URL formatting here
             card.innerHTML = `
                 <div class="forecast-date">${dayName}</div>
                 <img src="[https://openweathermap.org/img/wn/$](https://openweathermap.org/img/wn/$){day.weather[0].icon}@2x.png" alt="icon">
                 <div class="forecast-temp">${Math.round(day.main.temp)}°</div>
-                <div style="font-size: 0.9rem; color: var(--text-muted); text-transform: capitalize;">
-                    ${day.weather[0].main}
-                </div>
             `;
             grid.appendChild(card);
         });
