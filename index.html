@@ -4,88 +4,117 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Advanced Weather Dashboard</title>
-    <!-- Google Fonts -->
-    <link href="[https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap](https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap)" rel="stylesheet">
+    <!-- Google Fonts (Fixed Link) -->
+    <link href="[https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap](https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap)" rel="stylesheet">
+    <!-- Phosphor Icons for premium UI icons (Fixed Link) -->
+    <script src="[https://unpkg.com/@phosphor-icons/web](https://unpkg.com/@phosphor-icons/web)"></script>
     
     <!-- Link to separated CSS file -->
     <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
 
+    <div class="background-orbs"></div>
+
     <div class="container">
         <!-- API Settings Panel (Hidden by default) -->
         <div id="settingsPanel" class="panel settings-panel">
-            <h3>⚙️ API Configuration Required</h3>
-            <p style="margin-bottom: 1rem; color: var(--text-muted);">To fetch live weather data, please enter your free OpenWeatherMap API key. This is saved securely in your browser's Local Storage.</p>
-            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
-                <input type="text" id="apiKeyInput" placeholder="Enter OpenWeatherMap API Key...">
-                <button id="saveSettingsBtn">Save Key</button>
+            <div class="settings-header">
+                <i class="ph ph-gear-six"></i>
+                <h3>API Configuration</h3>
+            </div>
+            <p>Enter your free OpenWeatherMap API key to fetch live data. It will be saved securely in your browser's Local Storage.</p>
+            <div class="input-group">
+                <input type="text" id="apiKeyInput" placeholder="Paste your API Key here...">
+                <button id="saveSettingsBtn" class="btn-primary">Save Key</button>
             </div>
         </div>
 
         <!-- Header -->
         <header>
-            <h1>WeatherDash</h1>
+            <div class="logo">
+                <i class="ph-fill ph-cloud-sun"></i>
+                <h1>WeatherDash</h1>
+            </div>
             <form id="searchForm" class="search-form">
-                <input type="text" id="cityInput" placeholder="Search for a city..." required>
-                <button type="submit">Search</button>
+                <div class="search-wrapper">
+                    <i class="ph ph-magnifying-glass search-icon"></i>
+                    <input type="text" id="cityInput" placeholder="Search for a city..." required autocomplete="off">
+                </div>
+                <button type="submit" class="btn-primary">Search</button>
             </form>
-            <button id="toggleSettingsBtn" class="btn-settings">Settings</button>
+            <button id="toggleSettingsBtn" class="btn-icon" aria-label="Settings">
+                <i class="ph ph-faders"></i>
+            </button>
         </header>
 
         <!-- Error Message -->
-        <div id="errorMessage" class="error-message"></div>
+        <div id="errorMessage" class="error-message">
+            <i class="ph ph-warning-circle"></i>
+            <span id="errorText"></span>
+        </div>
 
         <!-- Recent Searches -->
-        <div>
-            <span style="font-size: 0.9rem; color: var(--text-muted); letter-spacing: 1px;">RECENT SEARCHES:</span>
+        <div class="recent-container">
+            <span class="recent-label">Recent:</span>
             <div id="recentSearches" class="recent-searches"></div>
         </div>
 
         <!-- Loading State -->
         <div id="loadingIndicator" class="loading-overlay">
             <div class="spinner"></div>
-            <p style="font-size: 1.2rem; color: var(--text-muted);">Fetching weather data...</p>
+            <p>Fetching forecast...</p>
         </div>
 
         <!-- Main Content Area -->
-        <div id="weatherContent" class="hidden">
-            <!-- Current Weather Panel -->
-            <div class="panel">
-                <div class="current-weather">
+        <div id="weatherContent" class="hidden fade-in">
+            
+            <div class="top-row">
+                <!-- Current Weather Panel -->
+                <div class="panel current-weather-panel">
                     <div class="weather-main">
-                        <h2 id="cityName">London, UK</h2>
-                        <p id="weatherDesc">Scattered Clouds</p>
-                        <div class="temp-display">
-                            <img id="weatherIcon" src="" alt="Weather icon">
-                            <h1 id="temperature">24°C</h1>
+                        <div>
+                            <h2 id="cityName">--</h2>
+                            <p id="weatherDesc" class="weather-desc">--</p>
                         </div>
+                        <img id="weatherIcon" src="" alt="Weather icon" class="main-icon hidden">
+                    </div>
+                    <div class="temp-display">
+                        <h1 id="temperature">--</h1>
                     </div>
                 </div>
-                
-                <div class="weather-details">
-                    <div class="detail-item">
+
+                <!-- Weather Details Grid -->
+                <div class="details-grid">
+                    <div class="panel detail-card">
+                        <i class="ph ph-drop"></i>
                         <span class="detail-label">Humidity</span>
-                        <span class="detail-value" id="humidity">65%</span>
+                        <span class="detail-value" id="humidity">--</span>
                     </div>
-                    <div class="detail-item">
-                        <span class="detail-label">Wind Speed</span>
-                        <span class="detail-value" id="windSpeed">5.2 m/s</span>
+                    <div class="panel detail-card">
+                        <i class="ph ph-wind"></i>
+                        <span class="detail-label">Wind</span>
+                        <span class="detail-value" id="windSpeed">--</span>
                     </div>
-                    <div class="detail-item">
+                    <div class="panel detail-card">
+                        <i class="ph ph-thermometer"></i>
                         <span class="detail-label">Feels Like</span>
-                        <span class="detail-value" id="feelsLike">25°C</span>
+                        <span class="detail-value" id="feelsLike">--</span>
                     </div>
-                    <div class="detail-item">
+                    <div class="panel detail-card">
+                        <i class="ph ph-gauge"></i>
                         <span class="detail-label">Pressure</span>
-                        <span class="detail-value" id="pressure">1012 hPa</span>
+                        <span class="detail-value" id="pressure">--</span>
                     </div>
                 </div>
             </div>
 
             <!-- Forecast Panel -->
-            <div class="panel">
-                <h3>5-Day Forecast</h3>
+            <div class="panel forecast-panel">
+                <div class="panel-header">
+                    <i class="ph ph-calendar-blank"></i>
+                    <h3>5-Day Forecast</h3>
+                </div>
                 <div id="forecastGrid" class="forecast-grid">
                     <!-- Forecast items injected via JS -->
                 </div>
